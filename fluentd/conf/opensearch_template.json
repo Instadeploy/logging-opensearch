@@ -1,0 +1,72 @@
+{
+    "index_patterns": ["fluentd-*"],
+    "template": {
+      "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "index.refresh_interval": "5s"
+      },
+      "mappings": {
+        "properties": {
+          "@timestamp": {
+            "type": "date"
+          },
+          "level": {
+            "type": "keyword"
+          },
+          "message": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "app": {
+            "type": "keyword"
+          },
+          "environment": {
+            "type": "keyword"
+          },
+          "host": {
+            "type": "keyword"
+          },
+          "pid": {
+            "type": "long"
+          },
+          "error_class": {
+            "type": "keyword"
+          },
+          "error_message": {
+            "type": "text"
+          },
+          "error_stack": {
+            "type": "text"
+          },
+          "request_method": {
+            "type": "keyword"
+          },
+          "request_url": {
+            "type": "keyword"
+          },
+          "request_ip": {
+            "type": "ip"
+          },
+          "context": {
+            "type": "object",
+            "enabled": true
+          },
+          "file": {
+            "type": "keyword"
+          },
+          "line": {
+            "type": "long"
+          },
+          "function": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
