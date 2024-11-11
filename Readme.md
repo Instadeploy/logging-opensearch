@@ -6,9 +6,9 @@ These can be deployed in two formats as listed below
 1. Docker Compose for local development and testing 
 2. As a Kamal accessory
 
-## How to run in Docker 
+## How to run in Docker `(docker-compose.yml)`
 
-1. Pull the Repo
+1. Pull the Repo 
 2. Create Certificates
     `openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout opensearch.key -out opensearch.crt`
 3. Run docker build command `docker-compose up --build`
@@ -23,7 +23,7 @@ These can be deployed in two formats as listed below
 > These certs are locally signed, which means they won't be verified by a CA.
 > You can look up instructions to create signed certs either on Chatgpt or Claude
 
-## Setup as a Kamal Accessory
+## Setup as a Kamal Accessory `(config/deploy.yml)`
 1. Create the certs as per above instructions if you are self-signing
 2. Copy over the `accessory` section to you Kamal Config
 3. Update the Host URL for both `Opensearch` and `Opensearch Dashboard` 
