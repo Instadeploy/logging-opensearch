@@ -3,14 +3,11 @@ service: logging-server
 
 image: <docker_key>/<image_name>
 
-
 ssh:
   user: root
 
-
 builder:
   arch: amd64
-
 
 registry:
   server: docker.io
@@ -19,7 +16,6 @@ registry:
   password:
     - KAMAL_REGISTRY_PASSWORD
 
-
 servers:
   web:
     hosts:
@@ -27,11 +23,9 @@ servers:
     options:
       expose: 8090
 
-
 env:
   clear:
     PORT: 8090
-
 
 accessories:
   opensearch:
@@ -73,7 +67,6 @@ accessories:
         OPENSEARCH_SSL_VERIFICATION_MODE: "none"
     directories:
       - /root/storage/opensearch_data:/usr/share/opensearch-dashboards/data
-
 
 proxy:
   ssl: false
