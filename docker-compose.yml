@@ -12,16 +12,15 @@ services:
       - "DISABLE_SECURITY_PLUGIN=false"
       - "OPENSEARCH_SECURITY_SSL_ONLY=true"
       - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=SamplePassword1!"
-      - "plugins.security.ssl.transport.pemcert_filepath=opensearch.crt"
-      - "plugins.security.ssl.transport.pemkey_filepath=opensearch.key"
-      - "plugins.security.ssl.transport.pemtrustedcas_filepath=opensearch.crt"
+      - "plugins.security.ssl.transport.pemcert_filepath=/usr/share/opensearch/config/certs/opensearch.crt"
+      - "plugins.security.ssl.transport.pemtrustedcas_filepath=/usr/share/opensearch/config/certs/opensearch.crt"
+      - "plugins.security.ssl.transport.pemkey_filepath=/usr/share/opensearch/config/certs/opensearch.key"
       - "plugins.security.ssl.http.enabled=true"
-      - "plugins.security.ssl.http.pemcert_filepath=opensearch.crt"
-      - "plugins.security.ssl.http.pemkey_filepath=opensearch.key"
-      - "plugins.security.ssl.http.pemtrustedcas_filepath=opensearch.crt"
+      - "plugins.security.ssl.http.pemcert_filepath=/usr/share/opensearch/config/certs/opensearch.crt"
+      - "plugins.security.ssl.http.pemkey_filepath=/usr/share/opensearch/config/certs/opensearch.key"
+      - "plugins.security.ssl.http.pemtrustedcas_filepath=/usr/share/opensearch/config/certs/opensearch.crt"
     volumes:
-      - ./opensearch.crt:/usr/share/opensearch/config/opensearch.crt
-      - ./opensearch.key:/usr/share/opensearch/config/opensearch.key
+      - ./certs:/usr/share/opensearch/config/certs
       - opensearch_data:/usr/share/opensearch/data
     ports:
       - "9200:9200"
@@ -29,18 +28,18 @@ services:
     networks:
       - logging_network
 
-  # opensearch-dashboards:
-  #   image: opensearchproject/opensearch-dashboards:latest
-  #   ports:
-  #     - "5601:5601"
-  #   environment:
-  #     - 'OPENSEARCH_HOSTS=["https://opensearch:9200"]'
-  #     - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=false"
-  #     - "OPENSEARCH_SSL_VERIFICATION_MODE=none"
-  #   networks:
-  #     - logging_network
-  #   depends_on:
-  #     - opensearch
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    ports:
+      - "5601:5601"
+    environment:
+      - 'OPENSEARCH_HOSTS=["https://opensearch:9200"]'
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=false"
+      - "OPENSEARCH_SSL_VERIFICATION_MODE=none"
+    networks:
+      - logging_network
+    depends_on:
+      - opensearch
 
 networks:
   logging_network:

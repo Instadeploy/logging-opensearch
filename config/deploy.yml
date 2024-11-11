@@ -1,72 +1,84 @@
 # config/deploy.yml
 service: logging-server
 
-image: jitin2pillai/logging-server
+image: <docker_key>/<image_name>
+
+
+ssh:
+  user: root
+
+
+builder:
+  arch: amd64
+
+
+registry:
+  server: docker.io
+  username: 
+    - DOCKER_REGISTRY_TOKEN
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
 
 servers:
   web:
     hosts:
-      - 5.161.46.210  # Replace with your actual server IP
+      - 5.161.xxx.xx
     options:
-      port: 8000
-    #   path: /health
-    #   port: 8090
-    #   max_attempts: 7
+      expose: 8090
+
 
 env:
   clear:
     PORT: 8090
 
-builder:
-  arch: amd64
-
-ssh:
-  user: root
-# keys: [ "~/.ssh/id_rsa.pem" ]
-
-# Credentials for your image host.
-registry:
-  username: jitin2pillai
-  password:
-    - DOCKER_REGISTRY_PASSWORD
 
 accessories:
   opensearch:
-    image: opensearchproject/opensearch:latest
-    host: 5.161.46.210
+    image: opensearchproject/opensearch:2.18.0
+    host: 5.161.xxx.xx
     service: opensearch
     port: 9200
-    files:
-      - ./certs/opensearch.crt:/usr/share/opensearch/config/opensearch.crt
-      - ./certs/opensearch.key:/usr/share/opensearch/config/opensearch.key
     env:
       clear:
         discovery.type: single-node
         bootstrap.memory_lock: true
         OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
-        DISABLE_INSTALL_DEMO_CONFIG: "false"
-        DISABLE_SECURITY_PLUGIN: "false"
-        OPENSEARCH_SECURITY_SSL_ONLY: "true"
-        OPENSEARCH_INITIAL_ADMIN_PASSWORD: "SamplePassword1!"
-        plugins.security.ssl.transport.pemcert_filepath: opensearch.crt
-        plugins.security.ssl.transport.pemkey_filepath: opensearch.key
-        plugins.security.ssl.transport.pemtrustedcas_filepath: opensearch.crt
-        plugins.security.ssl.http.enabled: "true"
-        plugins.security.ssl.http.pemcert_filepath: opensearch.crt
-        plugins.security.ssl.http.pemkey_filepath: opensearch.key
-        plugins.security.ssl.http.pemtrustedcas_filepath: opensearch.crt
-    volumes:
-      - /usr/share/opensearch/data:/usr/share/opensearch/data  # Direct host:container mapping
+        DISABLE_INSTALL_DEMO_CONFIG: false
+        DISABLE_SECURITY_PLUGIN: false
+        OPENSEARCH_SECURITY_SSL_ONLY: false
+        OPENSEARCH_INITIAL_ADMIN_PASSWORD: SamplePassword1!
+        "plugins.security.ssl.transport.pemcert_filepath": opensearch.crt
+        "plugins.security.ssl.transport.pemkey_filepath": opensearch.key
+        "plugins.security.ssl.transport.pemtrustedcas_filepath": opensearch.crt
+        "plugins.security.ssl.http.enabled": true
+        "plugins.security.ssl.http.pemcert_filepath": opensearch.crt
+        "plugins.security.ssl.http.pemkey_filepath": opensearch.key
+        "plugins.security.ssl.http.pemtrustedcas_filepath": opensearch.crt
+    directories:
+      - /root/storage/opensearch_data:/usr/share/opensearch/data 
+    files:
+      - ./certs/opensearch.crt:/usr/share/opensearch/config/opensearch.crt
+      - ./certs/opensearch.key:/usr/share/opensearch/config/opensearch.key
 
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:latest
-    host: 5.161.46.210
+    host: 5.161.xxx.xx
     service: opensearch-dashboards
     port: 5601
     env:
       clear:
-        OPENSEARCH_HOSTS: '["https://localhost:9200"]'
+        OPENSEARCH_HOSTS: '["https://5.161.xxx.xx:9200"]'
         DISABLE_SECURITY_DASHBOARDS_PLUGIN: "false"
         OPENSEARCH_SSL_VERIFICATION_MODE: "none"
+    directories:
+      - /root/storage/opensearch_data:/usr/share/opensearch-dashboards/data
 
 
+proxy:
+  ssl: false
+  app_port: 8090 
+  healthcheck:
+    path: /
+    interval: 2
+    timeout: 2
